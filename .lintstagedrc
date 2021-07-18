@@ -1,0 +1,9 @@
+{
+  "*.(ts|js|json|yml|md)": ["prettier --write", "eclint fix"],
+  ".*rc": ["prettier --write", "eclint fix"],
+  ".*ignore": ["eclint fix"],
+  ".editorconfig": ["eclint fix"],
+  ".vscode/**/*": ["eclint fix"],
+  ".husky/**/*": ["eclint fix"],
+  ".github/**/*": ["eclint fix"]
+}

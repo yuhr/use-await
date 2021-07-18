@@ -1,0 +1,56 @@
+{
+  "name": "use-await",
+  "version": "0.0.0",
+  "description": "A React hook that executes an async task to populate the desired data.",
+  "type": "module",
+  "sideEffects": false,
+  "source": "src/index.ts",
+  "main": "./dst/index.cjs",
+  "module": "./dst/index.module.js",
+  "unpkg": "./dst/index.umd.js",
+  "types": "dst/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dst/index.module.js",
+      "umd": "./dst/index.umd.js",
+      "require": "./dst/index.cjs",
+      "default": "./dst/index.modern.js"
+    }
+  },
+  "files": [
+    "dst"
+  ],
+  "scripts": {
+    "preinstall": "npx -y only-allow pnpm",
+    "build": "NODE_ENV=production microbundle",
+    "prepare": "husky install",
+    "test": "jest",
+    "watch": "jest --watch --detectOpenHandles"
+  },
+  "keywords": [
+    "react",
+    "hooks",
+    "async"
+  ],
+  "author": "Yu Shimura <mail@yuhr.org>",
+  "license": "MPL-2.0",
+  "peerDependencies": {
+    "react": ">=17"
+  },
+  "devDependencies": {
+    "@testing-library/react-hooks": "^7.0.1",
+    "@types/jest": "^26.0.24",
+    "@types/react": "^17.0.2",
+    "eclint": "^2.8.1",
+    "husky": "^7.0.1",
+    "jest": "^27.0.6",
+    "lint-staged": "^11.0.1",
+    "microbundle": "0.13.1",
+    "prettier": "npm:@yuhr/prettier@^2.2.1",
+    "react": "^17.0.2",
+    "react-test-renderer": "^17.0.2",
+    "semantic-release": "^17.4.4",
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.3.5"
+  }
+}
