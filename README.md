@@ -56,7 +56,7 @@ You can handle aborts of stale runs by doing:
 - Insert `tick = await tick()` between every statement in your async function
 - You can also use `signal` with [`AbortController`](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)-compatible APIs such as `fetch`
 
-Other usage is filly illustrated in the above example. You may also want to see [Illustrations of operating timelines](#illustrations-of-operating-timelines) section below.
+Other usage is fully illustrated in the above example. You may also want to see [Illustrations of operating timelines](#illustrations-of-operating-timelines) section below.
 
 ### When to Use This Package
 
@@ -70,7 +70,7 @@ You may notice there're already similar packages in the wild, such as [`use-asyn
 
 This package has of course a functionality to abort manually, and also a functionality to automatically “invalidate” the previous run of the async function when the dependencies have been updated and the stale task is not settled yet. This will reduce unexpected state changes and thus re-renders of the component.
 
-The returned object of `useAwaitData` always stands for the current run of the async function. Even if the invalidated run has settled while the current run is ongoing, the result of the invalidated run will be ignored and no re-render occurs.
+The returned object of `useAwaitData` always stands for the current run of the async function. Even if the invalidated run has settled while the current run is ongoing, the result of the invalidated run will be ignored and no re-render occur.
 
 ## Detailed Behavior and Usage
 
