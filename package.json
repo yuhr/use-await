@@ -23,10 +23,11 @@
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
     "build": "microbundle",
+    "prepack": "npm run build",
     "prepare": "husky install",
     "test": "jest",
     "watch": "jest --watch --detectOpenHandles",
-    "release": "semantic-release"
+    "release": "semantic-release --branches release"
   },
   "keywords": [
     "react",
