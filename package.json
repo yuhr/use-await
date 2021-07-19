@@ -21,7 +21,6 @@
     "dst"
   ],
   "scripts": {
-    "preinstall": "npx -y only-allow pnpm",
     "build": "microbundle",
     "prepack": "npm run build",
     "prepare": "husky install",
