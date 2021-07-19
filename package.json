@@ -25,7 +25,8 @@
     "build": "microbundle",
     "prepare": "husky install",
     "test": "jest",
-    "watch": "jest --watch --detectOpenHandles"
+    "watch": "jest --watch --detectOpenHandles",
+    "release": "semantic-release"
   },
   "keywords": [
     "react",
