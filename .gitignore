@@ -5,6 +5,7 @@ docs
 
 !.*rc
 !.*ignore
+!.gitattributes
 !.editorconfig
 !.vscode
 !.husky
