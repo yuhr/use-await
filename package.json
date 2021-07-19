@@ -32,10 +32,17 @@
   "keywords": [
     "react",
     "hooks",
-    "async"
+    "async",
+    "await",
+    "promise"
   ],
   "author": "Yu Shimura <mail@yuhr.org>",
   "license": "MPL-2.0",
+  "homepage": "https://github.com/yuhr/use-await-data#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yuhr/use-await-data.git"
+  },
   "peerDependencies": {
     "react": ">=17"
   },
