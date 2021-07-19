@@ -14,7 +14,7 @@ const symbolAborted: unique symbol = Symbol()
  *
  * > ```tsx
  * > const ShowData = ({ query }: { query: Query }) => {
- * >   const result = useAwait(
+ * >   const result = useAwaitData(
  * >     async ({ tick, signal }) => {
  * >       const a = await someTask(query)
  * >       tick = await tick()
@@ -53,8 +53,8 @@ const symbolAborted: unique symbol = Symbol()
  * otherwise it's just a no-op.
  *
  * The first parameter of `task` function will be a
- * {@link useAwait.Scheduler `Scheduler`} object, whose shape is `{ tick: Tick;
- * signal: AbortSignal }` and {@link useAwait.Tick `Tick`} is `() =>
+ * {@link useAwaitData.Scheduler `Scheduler`} object, whose shape is `{ tick: Tick;
+ * signal: AbortSignal }` and {@link useAwaitData.Tick `Tick`} is `() =>
  * PromiseLike<Tick>`. You may want to call the `tick` function with some
  * idiomatic syntax like `tick = await tick()` periodically in the task
  * function, in order to handle aborting of the task — `tick` immediately
@@ -105,15 +105,17 @@ const symbolAborted: unique symbol = Symbol()
  * status:  |<-running------>|<-aborted--->|<-running--->|<-fulfilled------------------>
  * ```
  */
-const useAwait = <Value>(
-  task: useAwait.AsyncTask<Value>,
+const useAwaitData = <Value>(
+  task: useAwaitData.AsyncTask<Value>,
   dependencies: unknown[] = [],
-): useAwait.Result<Value> => {
+): useAwaitData.Result<Value> => {
   const statuses = useMemo(
-    () => new Map<useAwait.AsyncTask<Value>, useAwait.Status>(),
+    () => new Map<useAwaitData.AsyncTask<Value>, useAwaitData.Status>(),
     [],
   )
-  const oldEffectRef = useRef<useAwait.AsyncTask<Value> | undefined>(undefined)
+  const oldEffectRef = useRef<useAwaitData.AsyncTask<Value> | undefined>(
+    undefined,
+  )
 
   const abortController = useMemo(() => new AbortController(), dependencies)
   const abort = useCallback(() => {
@@ -123,11 +125,11 @@ const useAwait = <Value>(
     }
   }, dependencies)
 
-  const [result, setResult] = useState<useAwait.Result<Value>>({
+  const [result, setResult] = useState<useAwaitData.Result<Value>>({
     status: "running",
     abort,
   })
-  const updateResult = useCallback((result: useAwait.Result<Value>) => {
+  const updateResult = useCallback((result: useAwaitData.Result<Value>) => {
     statuses.set(task, result.status)
     setResult(result)
   }, dependencies)
@@ -156,7 +158,7 @@ const useAwait = <Value>(
     }
 
     const tick = () =>
-      new Promise<useAwait.Tick>((resolve, reject) => {
+      new Promise<useAwaitData.Tick>((resolve, reject) => {
         switch (statuses.get(task)) {
           case undefined: // This means it should be invalidated
             reject(symbolInvalidate)
@@ -169,7 +171,7 @@ const useAwait = <Value>(
         }
       })
     const { signal } = abortController
-    const scheduler: useAwait.Scheduler = { tick, signal }
+    const scheduler: useAwaitData.Scheduler = { tick, signal }
 
     // Set initial status for the current task
     updateResult({ status: "running", abort })
@@ -182,7 +184,7 @@ const useAwait = <Value>(
   return result
 }
 
-namespace useAwait {
+namespace useAwaitData {
   export type Result<Value> =
     | { status: "fulfilled"; value: Value }
     | { status: "rejected"; error: unknown }
@@ -198,4 +200,4 @@ namespace useAwait {
   export type Scheduler = { tick: Tick; signal: AbortSignal }
 }
 
-export default useAwait
+export default useAwaitData

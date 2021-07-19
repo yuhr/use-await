@@ -1,10 +1,10 @@
-# React Hook: `useAwait`
+# React Hook: `useAwaitData`
 
 [![npm](https://img.shields.io/npm/v/use-await)](https://www.npmjs.com/package/use-await)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Test](https://github.com/yuhr/use-await/actions/workflows/test.yml/badge.svg)](https://github.com/yuhr/use-await/actions/workflows/test.yml)
 
-`useAwait` is a React hook that executes an async task to populate the desired data.
+`useAwaitData` is a React hook that executes an async task to populate the desired data.
 
 ## Features
 
@@ -19,10 +19,10 @@
 ## Example
 
 ```tsx
-import useAwait from "use-await"
+import useAwaitData from "use-await"
 
 const ShowData = ({ query }: { query: Query }) => {
-  const result = useAwait(
+  const result = useAwaitData(
     async ({ tick, signal }) => {
       const a = await someTask(query)
       tick = await tick()
@@ -69,7 +69,7 @@ You may notice there're already similar packages in the wild, such as [`use-asyn
 
 This package has of course a functionality to abort manually, and also a functionality to automatically “invalidate” the previous run of the async function when the dependencies have been updated and the stale task is not settled yet. This will reduce unexpected state changes and thus re-renders of the component.
 
-The returned object of `useAwait` always stands for the current run of the async function. Even if the invalidated run has settled while the current run is ongoing, the result of the invalidated run will be ignored and no re-render occurs.
+The returned object of `useAwaitData` always stands for the current run of the async function. Even if the invalidated run has settled while the current run is ongoing, the result of the invalidated run will be ignored and no re-render occurs.
 
 ## Detailed Behavior and Usage
 
