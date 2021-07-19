@@ -3,7 +3,7 @@
 [![NPM](https://img.shields.io/npm/l/use-await-data)](LICENSE)
 [![npm](https://img.shields.io/npm/v/use-await-data)](https://www.npmjs.com/package/use-await-data)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![Test](https://github.com/yuhr/use-await-data/actions/workflows/test.yml/badge.svg)](https://github.com/yuhr/use-await-data/actions/workflows/test.yml)
+[![microbundle](https://img.shields.io/badge/-📦%20microbundle-%23e3e7ea)](https://github.com/developit/microbundle)
 
 `useAwaitData` is a React hook that executes an async task to populate the desired data.
 
