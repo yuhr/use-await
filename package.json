@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
-    "build": "NODE_ENV=production microbundle",
+    "build": "microbundle",
     "prepare": "husky install",
     "test": "jest",
     "watch": "jest --watch --detectOpenHandles"
