@@ -1,8 +1,8 @@
 import { renderHook, act } from "@testing-library/react-hooks"
 import { useState, useCallback } from "react"
-import useAsyncEffect from "."
+import useAwaitData from "."
 
-describe("useAsyncEffect", () => {
+describe("useAwaitData", () => {
   beforeEach(() => {
     jest.useFakeTimers()
   })
@@ -12,7 +12,7 @@ describe("useAsyncEffect", () => {
 
   it("should handle fulfillments", async () => {
     const { result, waitForNextUpdate } = renderHook(() => {
-      const result = useAsyncEffect(async () => {
+      const result = useAwaitData(async () => {
         return await new Promise(resolve => setTimeout(resolve, 2000))
       })
       return { result }
@@ -26,7 +26,7 @@ describe("useAsyncEffect", () => {
 
   it("should handle rejections", async () => {
     const { result, waitForNextUpdate } = renderHook(() => {
-      const result = useAsyncEffect(async () => {
+      const result = useAwaitData(async () => {
         throw await new Promise(resolve =>
           setTimeout(resolve, 2000, new Error()),
         )
@@ -44,7 +44,7 @@ describe("useAsyncEffect", () => {
     const { result, waitForNextUpdate } = renderHook(() => {
       const [state, setState] = useState({})
       const update = useCallback(() => setState({}), [])
-      const result = useAsyncEffect(async () => {
+      const result = useAwaitData(async () => {
         return await new Promise(resolve => setTimeout(resolve, 2000))
       }, [state])
       return { result, update } as const
@@ -66,7 +66,7 @@ describe("useAsyncEffect", () => {
     const { result, waitForNextUpdate } = renderHook(() => {
       const [state, setState] = useState({})
       const update = useCallback(() => setState({}), [])
-      const result = useAsyncEffect(async () => {
+      const result = useAwaitData(async () => {
         return await new Promise(resolve => setTimeout(resolve, 2000))
       }, [state])
       return { result, update } as const
@@ -92,7 +92,7 @@ describe("useAsyncEffect", () => {
     const { result, waitForNextUpdate } = renderHook(() => {
       const [state, setState] = useState({})
       const update = useCallback(() => setState({}), [])
-      const result = useAsyncEffect(async () => {
+      const result = useAwaitData(async () => {
         return await new Promise(resolve => setTimeout(resolve, 2000))
       }, [state])
       return { result, update } as const
