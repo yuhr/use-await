@@ -116,6 +116,7 @@ const useAwaitData = <Value>(
   const staleTaskRef = useRef<useAwaitData.AsyncTask<Value> | undefined>(
     undefined,
   )
+  const staleAbortControllerRef = useRef<AbortController | undefined>(undefined)
 
   const abortController = useMemo(() => new AbortController(), dependencies)
   const abort = useCallback(() => {
@@ -178,6 +179,8 @@ const useAwaitData = <Value>(
     // Invalidate the stale task
     if (staleTaskRef.current) tasks.delete(staleTaskRef.current)
     staleTaskRef.current = task
+    if (staleAbortControllerRef.current) staleAbortControllerRef.current.abort()
+    staleAbortControllerRef.current = abortController
     // Start the task
     task(scheduler).then(onfulfilled).catch(onrejected)
   }, dependencies)
