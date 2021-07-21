@@ -109,17 +109,17 @@ const useAwaitData = <Value>(
   task: useAwaitData.AsyncTask<Value>,
   dependencies: unknown[] = [],
 ): useAwaitData.Result<Value> => {
-  const statuses = useMemo(
+  const tasks = useMemo(
     () => new Map<useAwaitData.AsyncTask<Value>, useAwaitData.Status>(),
     [],
   )
-  const oldEffectRef = useRef<useAwaitData.AsyncTask<Value> | undefined>(
+  const staleTaskRef = useRef<useAwaitData.AsyncTask<Value> | undefined>(
     undefined,
   )
 
   const abortController = useMemo(() => new AbortController(), dependencies)
   const abort = useCallback(() => {
-    if (statuses.get(task) === "running") {
+    if (tasks.get(task) === "running") {
       updateResult({ status: "aborted" })
       abortController.abort()
     }
@@ -130,14 +130,14 @@ const useAwaitData = <Value>(
     abort,
   })
   const updateResult = useCallback((result: useAwaitData.Result<Value>) => {
-    statuses.set(task, result.status)
+    tasks.set(task, result.status)
     setResult(result)
   }, dependencies)
 
   // This block runs only if the dependencies changed
   useMemo(() => {
     const onfulfilled = (value: Value) => {
-      switch (statuses.get(task)) {
+      switch (tasks.get(task)) {
         case undefined: // This means it was invalidated
         case "aborted":
           // Nothing to do here, it's taken over by a newer task
@@ -159,7 +159,7 @@ const useAwaitData = <Value>(
 
     const tick = () =>
       new Promise<useAwaitData.Tick>((resolve, reject) => {
-        switch (statuses.get(task)) {
+        switch (tasks.get(task)) {
           case undefined: // This means it should be invalidated
             reject(symbolInvalidate)
             break
@@ -175,9 +175,9 @@ const useAwaitData = <Value>(
 
     // Set initial status for the current task
     updateResult({ status: "running", abort })
-    // Invalidate the old task
-    if (oldEffectRef.current) statuses.delete(oldEffectRef.current)
-    oldEffectRef.current = task
+    // Invalidate the stale task
+    if (staleTaskRef.current) tasks.delete(staleTaskRef.current)
+    staleTaskRef.current = task
     // Start the task
     task(scheduler).then(onfulfilled).catch(onrejected)
   }, dependencies)
