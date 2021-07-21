@@ -74,7 +74,7 @@ The returned object of `useAwaitData` always stands for the current run of the a
 
 ## Detailed Behavior and Usage
 
-**_Every update of the dependencies causes a re-run of the task!_** This hook automatically invalidates the execution of the stale task. When a invalidate occurs, the old task will be handled as if it was aborted (abort process is described in the further paragraphs), but the resulting status remains as `"running"` until the new task run settles. Please pay attention to your dependencies — you should avoid unnecessary updates as much as possible in order to prevent the task from wasted runs. For this reason, unlike React's `useEffect` hook, the task function is run at only the first time even if `dependencies` parameter was not provided.
+**_Every update of the dependencies causes a re-run of the task!_** This hook automatically invalidates the execution of the stale task. When a invalidate occurs, the old task will be treated as if it was aborted (abort process is described in the further paragraphs), but the resulting status remains as `"running"` until the new task run settles. Please pay attention to your dependencies — you should avoid unnecessary updates as much as possible in order to prevent the task from wasted runs. For this reason, unlike React's `useEffect` hook, the task function is run at only the first time even if `dependencies` parameter was not provided.
 
 When the `status` property of the result object is `"running"`, you can access to the `abort` property which is a `() => void` to request abort to the scheduler. Note that `abort` only works while the status is `"running"`, otherwise it's just a no-op.
 
