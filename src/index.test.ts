@@ -2,6 +2,8 @@ import { renderHook, act } from "@testing-library/react-hooks"
 import { useState, useCallback } from "react"
 import useAwaitData from "."
 
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 describe("useAwaitData", () => {
   beforeEach(() => {
     jest.useFakeTimers()
@@ -13,7 +15,7 @@ describe("useAwaitData", () => {
   it("should handle fulfillments", async () => {
     const { result, waitForNextUpdate } = renderHook(() => {
       const result = useAwaitData(async () => {
-        return await new Promise(resolve => setTimeout(resolve, 2000))
+        return await wait(2000)
       })
       return { result }
     })
@@ -45,7 +47,7 @@ describe("useAwaitData", () => {
       const [state, setState] = useState({})
       const update = useCallback(() => setState({}), [])
       const result = useAwaitData(async () => {
-        return await new Promise(resolve => setTimeout(resolve, 2000))
+        return await wait(2000)
       }, [state])
       return { result, update } as const
     })
@@ -67,7 +69,7 @@ describe("useAwaitData", () => {
       const [state, setState] = useState({})
       const update = useCallback(() => setState({}), [])
       const result = useAwaitData(async () => {
-        return await new Promise(resolve => setTimeout(resolve, 2000))
+        return await wait(2000)
       }, [state])
       return { result, update } as const
     })
@@ -93,7 +95,7 @@ describe("useAwaitData", () => {
       const [state, setState] = useState({})
       const update = useCallback(() => setState({}), [])
       const result = useAwaitData(async () => {
-        return await new Promise(resolve => setTimeout(resolve, 2000))
+        return await wait(2000)
       }, [state])
       return { result, update } as const
     })
