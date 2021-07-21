@@ -120,4 +120,63 @@ describe("useAwaitData", () => {
     await waitForNextUpdate()
     expect(result.current.result.status).toBe("fulfilled")
   })
+
+  it("should abort `AbortController` at abort request", async () => {
+    const { result, waitForNextUpdate } = renderHook(() => {
+      const [state, setState] = useState({})
+      const [isAborted, setIsAborted] = useState(false)
+      const update = useCallback(() => setState({}), [])
+      const result = useAwaitData(
+        async ({ signal }) => {
+          signal.onabort = () => setIsAborted(true)
+          return await wait(2000)
+        },
+        [state],
+      )
+      return { result, update, isAborted } as const
+    })
+    expect(result.current.result.status).toBe("running")
+    expect(result.current.isAborted).toBe(false)
+    jest.advanceTimersByTime(1000)
+    expect(result.current.result.status).toBe("running")
+    expect(result.current.isAborted).toBe(false)
+    act(() => {
+      result.current.result.status === "running" &&
+        result.current.result.abort()
+    })
+    expect(result.current.result.status).toBe("aborted")
+    expect(result.current.isAborted).toBe(true)
+  })
+
+  it("should abort `AbortController` at invalidate", async () => {
+    const { result, waitForNextUpdate } = renderHook(() => {
+      const [state, setState] = useState({})
+      const [isAborted, setIsAborted] = useState(false)
+      const update = useCallback(() => setState({}), [])
+      const result = useAwaitData(
+        async ({ signal }) => {
+          signal.onabort = () => setIsAborted(true)
+          return await wait(2000)
+        },
+        [state],
+      )
+      return { result, update, isAborted } as const
+    })
+    expect(result.current.result.status).toBe("running")
+    expect(result.current.isAborted).toBe(false)
+    jest.advanceTimersByTime(1000)
+    expect(result.current.result.status).toBe("running")
+    expect(result.current.isAborted).toBe(false)
+    act(result.current.update)
+    expect(result.current.result.status).toBe("running")
+    expect(result.current.isAborted).toBe(true)
+    jest.advanceTimersByTime(1000)
+    expect(result.current.result.status).toBe("running")
+    expect(result.current.isAborted).toBe(true)
+    jest.advanceTimersByTime(1000)
+    expect(result.current.result.status).toBe("running")
+    expect(result.current.isAborted).toBe(true)
+    await waitForNextUpdate()
+    expect(result.current.result.status).toBe("fulfilled")
+  })
 })
