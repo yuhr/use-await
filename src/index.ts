@@ -135,29 +135,29 @@ const useAwaitData = <Value>(
     setResult(result)
   }, dependencies)
 
-  const onfulfilled = useCallback((value: Value) => {
-    switch (tasks.get(task)) {
-      case undefined: // This means it was invalidated
-      case "aborted":
-        // Nothing to do here, it's taken over by a newer task
-        break
-      default:
-        updateResult({ status: "fulfilled", value })
+  useMemo(() => {
+    const onfulfilled = (value: Value) => {
+      switch (tasks.get(task)) {
+        case undefined: // This means it was invalidated
+        case "aborted":
+          // Nothing to do here, it's taken over by a newer task
+          break
+        default:
+          updateResult({ status: "fulfilled", value })
+      }
     }
-  }, dependencies)
-  const onrejected = useCallback((error: unknown) => {
-    switch (error) {
-      case symbolInvalidate:
-      case symbolAborted:
-        // Nothing to do here, it's taken over by a newer task
-        break
-      default:
-        updateResult({ status: "rejected", error })
+    const onrejected = (error: unknown) => {
+      switch (error) {
+        case symbolInvalidate:
+        case symbolAborted:
+          // Nothing to do here, it's taken over by a newer task
+          break
+        default:
+          updateResult({ status: "rejected", error })
+      }
     }
-  }, dependencies)
 
-  const tick = useCallback(
-    () =>
+    const tick = () =>
       new Promise<useAwaitData.Tick>((resolve, reject) => {
         switch (tasks.get(task)) {
           case undefined: // This means it should be invalidated
@@ -169,16 +169,11 @@ const useAwaitData = <Value>(
           default:
             resolve(tick)
         }
-      }),
-    dependencies,
-  )
+      })
 
-  const scheduler = useMemo<useAwaitData.Scheduler>(() => {
     const { signal } = abortController
-    return { tick, signal }
-  }, dependencies)
+    const scheduler: useAwaitData.Scheduler = { tick, signal }
 
-  useMemo(() => {
     const result: useAwaitData.Result<Value> = { status: "running", abort }
     tasks.set(task, result.status)
     // Invalidate the stale task
