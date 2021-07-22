@@ -91,7 +91,7 @@ time:    |----------------------------------------------------------------------
 event:   |<-initial call |<-deps update
 run #0:  |===============|<-(invalidated)===>|<-reject at tick·····>|<-(est. settle)
 run #1:                  |==============================>|<-resolve
-status:  |<-running------------------------------------->|<-fulfilled--------------->
+status:  |<-running----->|<-running--------------------->|<-fulfilled--------------->
 ```
 
 ### Case #2 — Dependencies update _after_ the first run settled
