@@ -135,30 +135,29 @@ const useAwaitData = <Value>(
     setResult(result)
   }, dependencies)
 
-  // This block runs only if the dependencies changed
-  useMemo(() => {
-    const onfulfilled = (value: Value) => {
-      switch (tasks.get(task)) {
-        case undefined: // This means it was invalidated
-        case "aborted":
-          // Nothing to do here, it's taken over by a newer task
-          break
-        default:
-          updateResult({ status: "fulfilled", value })
-      }
+  const onfulfilled = useCallback((value: Value) => {
+    switch (tasks.get(task)) {
+      case undefined: // This means it was invalidated
+      case "aborted":
+        // Nothing to do here, it's taken over by a newer task
+        break
+      default:
+        updateResult({ status: "fulfilled", value })
     }
-    const onrejected = (error: unknown) => {
-      switch (error) {
-        case symbolInvalidate:
-        case symbolAborted:
-          // Nothing to do here, it's taken over by a newer task
-          break
-        default:
-          updateResult({ status: "rejected", error })
-      }
+  }, dependencies)
+  const onrejected = useCallback((error: unknown) => {
+    switch (error) {
+      case symbolInvalidate:
+      case symbolAborted:
+        // Nothing to do here, it's taken over by a newer task
+        break
+      default:
+        updateResult({ status: "rejected", error })
     }
+  }, dependencies)
 
-    const tick = () =>
+  const tick = useCallback(
+    () =>
       new Promise<useAwaitData.Tick>((resolve, reject) => {
         switch (tasks.get(task)) {
           case undefined: // This means it should be invalidated
@@ -170,20 +169,30 @@ const useAwaitData = <Value>(
           default:
             resolve(tick)
         }
-      })
-    const { signal } = abortController
-    const scheduler: useAwaitData.Scheduler = { tick, signal }
+      }),
+    dependencies,
+  )
 
-    // Set initial status for the current task
-    updateResult({ status: "running", abort })
+  const scheduler = useMemo<useAwaitData.Scheduler>(() => {
+    const { signal } = abortController
+    return { tick, signal }
+  }, dependencies)
+
+  useMemo(() => {
+    const result: useAwaitData.Result<Value> = { status: "running", abort }
+    tasks.set(task, result.status)
     // Invalidate the stale task
-    if (staleTaskRef.current) tasks.delete(staleTaskRef.current)
+    if (staleTaskRef.current) {
+      setResult(result)
+      tasks.delete(staleTaskRef.current)
+    }
     staleTaskRef.current = task
     if (staleAbortControllerRef.current) staleAbortControllerRef.current.abort()
     staleAbortControllerRef.current = abortController
     // Start the task
     task(scheduler).then(onfulfilled).catch(onrejected)
   }, dependencies)
+
   return result
 }
 
