@@ -12,6 +12,18 @@ describe("useAwaitData", () => {
     jest.useRealTimers()
   })
 
+  it("should not re-render at first run", async () => {
+    const render = jest.fn()
+    const { result, waitForNextUpdate } = renderHook(() => {
+      const result = useAwaitData(async () => {
+        return await wait(2000)
+      })
+      render()
+      return { result }
+    })
+    expect(render).toHaveBeenCalledTimes(1)
+  })
+
   it("should handle fulfillments", async () => {
     const { result, waitForNextUpdate } = renderHook(() => {
       const result = useAwaitData(async () => {
