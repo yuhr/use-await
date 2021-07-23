@@ -84,6 +84,8 @@ Even if you don't use the `tick` function, once abort request has been filed, th
 
 ## Illustrations of operating timelines
 
+Asterisks (`*`) at the bottom of each graph indicate **_re-renders caused by `useAwaitData`_**. Note that these don't directly mean updates of the result object. Updates are indicated as vertical bars on the “status” lines.
+
 ### Case #1 — Dependencies update _before_ the first run settles
 
 ```plain
@@ -92,6 +94,7 @@ event:   |<-initial call |<-deps update
 run #0:  |===============|<-(invalidated)===>|<-reject at tick·····>|<-(est. settle)
 run #1:                  |==============================>|<-resolve
 status:  |<-running----->|<-running--------------------->|<-fulfilled--------------->
+                                                         *
 ```
 
 ### Case #2 — Dependencies update _after_ the first run settled
@@ -102,6 +105,7 @@ event:   |<-initial call                  |<--deps update
 run #0:  |================>|<-reject
 run #1:                                   |===============>|<-resolve
 status:  |<-running------->|<-rejected--->|<-running------>|<-fullfilled------------>
+                           *                               *
 ```
 
 ### Case #3 — Dependencies update _after_ the first run aborted but tick isn't used
@@ -112,4 +116,5 @@ event:   |<-initial call  |<-abort      |<-deps update             |<-abort (ign
 run #0:  |================|<-(abort requested but no tick)====>|<-resolve (ignored)
 run #1:                                 |============>|<-resolve
 status:  |<-running------>|<-aborted--->|<-running--->|<-fulfilled------------------>
+                          *                           *
 ```
