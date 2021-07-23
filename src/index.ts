@@ -123,16 +123,21 @@ const useAwaitData = <Value>(
     if (tasks.get(task) === "running") {
       updateResult({ status: "aborted" })
       abortController.abort()
+      rerender()
     }
   }, dependencies)
 
-  const [result, setResult] = useState<useAwaitData.Result<Value>>({
+  const resultRef = useRef<useAwaitData.Result<Value>>({
     status: "running",
     abort,
   })
+
+  const [, setIsRerender] = useState({})
+  const rerender = useCallback(() => setIsRerender({}), [])
+
   const updateResult = useCallback((result: useAwaitData.Result<Value>) => {
+    resultRef.current = result
     tasks.set(task, result.status)
-    setResult(result)
   }, dependencies)
 
   useMemo(() => {
@@ -144,6 +149,7 @@ const useAwaitData = <Value>(
           break
         default:
           updateResult({ status: "fulfilled", value })
+          rerender()
       }
     }
     const onrejected = (error: unknown) => {
@@ -154,6 +160,7 @@ const useAwaitData = <Value>(
           break
         default:
           updateResult({ status: "rejected", error })
+          rerender()
       }
     }
 
@@ -174,13 +181,9 @@ const useAwaitData = <Value>(
     const { signal } = abortController
     const scheduler: useAwaitData.Scheduler = { tick, signal }
 
-    const result: useAwaitData.Result<Value> = { status: "running", abort }
-    tasks.set(task, result.status)
+    updateResult({ status: "running", abort })
     // Invalidate the stale task
-    if (staleTaskRef.current) {
-      setResult(result)
-      tasks.delete(staleTaskRef.current)
-    }
+    if (staleTaskRef.current) tasks.delete(staleTaskRef.current)
     staleTaskRef.current = task
     if (staleAbortControllerRef.current) staleAbortControllerRef.current.abort()
     staleAbortControllerRef.current = abortController
@@ -188,7 +191,7 @@ const useAwaitData = <Value>(
     task(scheduler).then(onfulfilled).catch(onrejected)
   }, dependencies)
 
-  return result
+  return resultRef.current
 }
 
 namespace useAwaitData {
