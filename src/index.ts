@@ -132,8 +132,8 @@ const useAwaitData = <Value>(
     abort,
   })
 
-  const [, setIsRerender] = useState({})
-  const rerender = useCallback(() => setIsRerender({}), [])
+  const [, setRerender] = useState({})
+  const rerender = useCallback(() => setRerender({}), [])
 
   const updateResult = useCallback((result: useAwaitData.Result<Value>) => {
     resultRef.current = result
