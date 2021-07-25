@@ -3,6 +3,12 @@ import { useState, useCallback, useMemo, useRef } from "react"
 const symbolInvalidate: unique symbol = Symbol()
 const symbolAborted: unique symbol = Symbol()
 
+const useRerender = () => {
+  const [, setRerender] = useState({})
+  const rerender = useCallback(() => setRerender({}), [])
+  return rerender
+}
+
 /**
  * A React hook that executes an async task to populate the desired data.
  *
@@ -132,8 +138,7 @@ const useAwaitData = <Value>(
     abort,
   })
 
-  const [, setRerender] = useState({})
-  const rerender = useCallback(() => setRerender({}), [])
+  const rerender = useRerender()
 
   const updateResult = useCallback((result: useAwaitData.Result<Value>) => {
     resultRef.current = result
