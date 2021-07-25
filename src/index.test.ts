@@ -160,32 +160,32 @@ describe("useAwaitData", () => {
 
   it("should abort `AbortController` at abort request", async () => {
     const render = jest.fn()
+    const abort = jest.fn()
     const { result, waitForNextUpdate } = renderHook(() => {
       const [state, setState] = useState({})
-      const [isAborted, setIsAborted] = useState(false)
       const update = useCallback(() => setState({}), [])
       const result = useAwaitData(
         async ({ signal }) => {
-          signal.onabort = () => setIsAborted(true)
+          signal.onabort = () => abort(true)
           return await wait(2000)
         },
         [state],
       )
       render()
-      return { result, update, isAborted } as const
+      return { result, update } as const
     })
     expect(result.current.result.status).toBe("running")
-    expect(result.current.isAborted).toBe(false)
+    expect(abort).toHaveBeenCalledTimes(0)
     jest.advanceTimersByTime(1000)
     expect(result.current.result.status).toBe("running")
-    expect(result.current.isAborted).toBe(false)
+    expect(abort).toHaveBeenCalledTimes(0)
     expect(render).toHaveBeenCalledTimes(1)
     act(() => {
       result.current.result.status === "running" &&
         result.current.result.abort()
     })
     expect(result.current.result.status).toBe("aborted")
-    expect(result.current.isAborted).toBe(true)
+    expect(abort).toHaveBeenCalledTimes(1)
     expect(render).toHaveBeenCalledTimes(2)
   })
 
