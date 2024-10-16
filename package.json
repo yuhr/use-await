@@ -14,6 +14,7 @@
       "browser": "./dst/index.module.js",
       "umd": "./dst/index.umd.js",
       "require": "./dst/index.cjs",
+      "types": "./dst/index.d.ts",
       "default": "./dst/index.modern.js"
     }
   },
